@@ -1,0 +1,258 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - FalconTrader</title>
+
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+
+        <meta charset="utf-8" />
+        <title>Forms </title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+        <meta content="Themesbrand" name="author" />
+        <!-- App favicon -->
+        <link rel="shortcut icon" href="~/images/favicon.ico">
+        <link href="~/lib/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        <link href="~/lib/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
+        <!-- choices css -->
+        <link href="~/lib/choices.js/public/~/styles/choices.min.css" rel="stylesheet" type="text/css" />
+        <!-- color picker css -->
+        <link rel="stylesheet" href="~/lib/%40simonwep/pickr/themes/classic.min.css" /> <!-- 'classic' theme -->
+        <link rel="stylesheet" href="~/lib/%40simonwep/pickr/themes/monolith.min.css" /> <!-- 'monolith' theme -->
+        <link rel="stylesheet" href="~/lib/%40simonwep/pickr/themes/nano.min.css" /> <!-- 'nano' theme -->
+        <!-- datepicker css -->
+        <link rel="stylesheet" href="~/lib/flatpickr/flatpickr.min.css">
+        <!-- preloader css -->
+        <link rel="stylesheet" href="~/css/preloader.min.css" type="text/css" />
+        <!-- Bootstrap Css -->
+        <link href="~/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        <!-- Icons Css -->
+        <link href="~/css/icons.min.css" rel="stylesheet" type="text/css" />
+        <!-- App Css-->
+        <link href="~/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
+        <link href="~/lib/toastr/css/toastr.css" rel="stylesheet" />
+        <link href="~/css/chosen.css" rel="stylesheet" />
+        <style>
+
+            button.btn.btn-success.w-md {
+                margin-top: 30px;
+            }
+        </style>
+    </environment>
+    @*<environment exclude="Development">
+            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
+                  crossorigin="anonymous"
+                  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"/>
+        </environment>*@
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    @*<header>
+
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+                <div class="container">
+                    <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">WebPOS</a>
+                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex flex-sm-row-reverse">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>*@
+    <div id="layout-wrapper">
+
+        <header id="page-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <!-- LOGO -->
+                    <div class="navbar-brand-box">
+                        <a href="index.html" class="logo logo-dark">
+                            <span class="logo-sm">
+                                <img src="~/images/logo-sm.svg" alt="" height="24">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/images/logo-sm.svg" alt="" height="24"> <span class="logo-txt">POS</span>
+                            </span>
+                        </a>
+                        <a href="index.html" class="logo logo-light">
+                            <span class="logo-sm">
+                                <img src="~/images/logo-sm.svg" alt="" height="24">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/images/logo-sm.svg" alt="" height="24"> <span class="logo-txt">POS</span>
+                            </span>
+                        </a>
+                    </div>
+                    <button type="button" class="btn btn-sm px-3 font-size-16 header-item" id="vertical-menu-btn">
+                        <i class="fa fa-fw fa-bars"></i>
+                    </button>
+                    <!-- App Search-->
+                    <form class="app-search d-none d-lg-block">
+                        <div class="position-relative">
+                            <input type="text" class="form-control" placeholder="Search...">
+                            <button class="btn btn-primary" type="button"><i class="bx bx-search-alt align-middle"></i></button>
+                        </div>
+                    </form>
+                </div>
+                <div class="d-flex">
+                    <div class="dropdown d-inline-block d-lg-none ms-2">
+                        <button type="button" class="btn header-item" id="page-header-search-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i data-feather="search" class="icon-lg"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end p-0"
+                             aria-labelledby="page-header-search-dropdown">
+
+                            <form class="p-3">
+                                <div class="form-group m-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Search Result">
+                                        <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item bg-soft-light border-start border-end" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="rounded-circle header-profile-user" src="~/images/users/avatar-1.jpg"
+                                 alt="Header Avatar">
+                            <span class="d-none d-xl-inline-block ms-1 fw-medium">Hasan</span>
+                            <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+
+
+                            <a class="dropdown-item" href="auth-logout.html"><i class="mdi mdi-logout font-size-16 align-middle me-1"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </header>
+        <div class="vertical-menu">
+            <div data-simplebar class="h-100">
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li><a href="/Product/Details">Products</a></li>
+                        <li><a href="/Stock/Stock">Stocks</a></li>
+                        <li><a href="/Customer/Customer">Customers</a></li>
+                        <li><a href="/Sales/Index">Sales</a></li>
+                        <li><a href="/Sales/GetSales">Daily Report</a></li>
+
+                    </ul>
+
+                </div>
+                <!-- Sidebar -->
+            </div>
+        </div>
+        <div class="container2">
+            <partial name="_CookieConsentPartial" />
+            <main role="main" class="pb-3">
+                @RenderBody()
+            </main>
+        </div>
+        <footer class="footer">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <script>document.write(new Date().getFullYear())</script> © Syed&Sons.
+                    </div>
+
+                </div>
+            </div>
+        </footer>
+        @*<footer class="border-top footer text-muted">
+                <div class="container">
+                </div>
+            </footer>*@
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/jquery.min.js"></script>
+        <script src="~/js/pages/chosen.jquery.min.js"></script>
+
+
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+        <script src="~/lib/metismenu/metisMenu.min.js"></script>
+        <script src="~/lib/simplebar/simplebar.min.js"></script>
+        <script src="~/lib/node-waves/waves.min.js"></script>
+        <script src="~/lib/feather-icons/feather.min.js"></script>
+        <!-- pace js -->
+        <script src="~/lib/pace-js/pace.min.js"></script>
+        <!-- Required datatable js -->
+        <script src="~/lib/datatables.net/js/jquery.dataTables.min.js"></script>
+        <script src="~/lib/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="~/lib/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+        <!-- choices js -->
+        <script src="~/lib/choices.js/public/~/scripts/choices.min.js"></script>
+        <!-- color picker js -->
+        <script src="~/lib/%40simonwep/pickr/pickr.min.js"></script>
+        <script src="~/lib/%40simonwep/pickr/pickr.es5.min.js"></script>
+        <!-- datepicker js -->
+        <script src="~/lib/flatpickr/flatpickr.min.js"></script>
+        <!-- init js -->
+        <script src="~/js/pages/form-advanced.init.js"></script>
+        <!-- Responsive examples -->
+        <script src="~/lib/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="~/lib/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+        <!-- Datatable init js -->
+        <script src="~/js/pages/datatables.init.js"></script>
+
+
+        <script src="~/js/app.js"></script>
+        <script src="~/js/Custom/Purchase.js"></script>
+        <script src="~/js/Custom/Customer.js"></script>
+        <script src="~/js/Custom/Product.js"></script>
+        <script src="~/js/Custom/Stock.js"></script>
+        <script src="~/js/Custom/Extention.js"></script>
+        <script src="~/js/Custom/Objects.js"></script>
+        <script src="~/js/pages/jquery.validate.min.js"></script>
+        <script src="~/lib/toastr/js/toastr.min.js"></script>
+    </environment>
+    @*<environment exclude="Development">
+            <script src="https://cdnjs.cloudflare.com/ajax/lib/jquery/3.3.1/jquery.min.js"
+                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                    asp-fallback-test="window.jQuery"
+                    crossorigin="anonymous"
+                    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
+            </script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
+                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                    crossorigin="anonymous"
+                    integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
+            </script>
+        </environment>*@
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @RenderSection("Scripts", required: false)
+
+</body>
+
+</html>
+<!-- This Project is Dedicated to My Mother Farkhanda Wadood-->

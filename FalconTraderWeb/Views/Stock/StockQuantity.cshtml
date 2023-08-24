@@ -1,0 +1,153 @@
+﻿
+@{
+    ViewData["Title"] = "StockQuantity";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Stock Quantity</h1>
+
+@using DataAccess.Models
+@model List<StockQuantity>
+
+@section Scripts {
+    <!-- Include view-specific JavaScript files -->
+    <script src="~/js/Custom/Stock.js"></script>
+}
+<h1>DailyReport</h1>
+
+<!-- ============================================================== -->
+<div class="main-content">
+    <div>
+        <div class="container-fluid">
+            <!-- start page title -->
+            <!-- end page title -->
+            <!-- <div class="col-xl-12"> -->
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Daily Report</h4>
+
+                    <div class="flex-shrink-0">
+                        <ul class="nav nav-tabs-custom card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#DailyReport" role="tab">StockIn-Report</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#AllSales" role="tab">All Sales</a>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="StockInReport" role="tabpanel">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Report</h4>
+                                            @*<input type="hidden" value="@ViewBag.StockIn" id="allsalestab" />*@
+                                        </div>
+                                        <div class="card-body">
+
+                                            <table id="stocktable" class="table table-hover table-striped table-bordered table-condensed dataTable-excel datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>WareHouse</th>
+                                                        <th>Product Code</th>
+                                                        <th>Product Name</th>
+                                                        <th>Unit Price</th>
+                                                        <th>Quantity</th>
+                                                        <th>Gross Amount</th>
+                                                        <th>Total Tax</th>
+                                                        <th>Net Amount</th>
+                                                    </tr>
+                                                </thead>
+
+                                                @if (Model != null)
+                                                {
+                                                    <tbody>
+
+                                                        @foreach (var stock in Model)
+                                                        {
+                                                            <tr id="row">
+                                                                <td>@stock.StockName</td>
+                                                                <td>@stock.ProductCode</td>
+                                                                <td>@stock.ProductName</td>
+                                                                <td>@stock.unitPrice</td>
+                                                                <td>@stock.Quantity</td>
+                                                                <td>@stock.GrossAmount</td>
+                                                                <td>@stock.TotalTax</td>
+                                                                <td>@stock.NetAmount</td>
+
+                                                            </tr>
+                                                        }
+
+                                                    </tbody>
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th colspan="4"></th>
+
+                                                            <th><span>@Model.Sum(i => i.Quantity).Value.ToString("N0")</span></th>
+                                                            <th><span>@Model.Sum(i => i.GrossAmount).Value.ToString("N0")</span></th>
+                                                            <th><span>@Model.Sum(i => i.TotalTax).Value.ToString("N0")</span></th>
+                                                            <th><span>@Model.Sum(i => i.NetAmount).Value.ToString("N0")</span></th>
+
+                                                        </tr>
+                                                    </tfoot>
+
+                                                }
+                                            </table>
+                                            @*<div class="row" style="margin-top:40px">
+                                                @if (Model != null)
+                                                {
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">Total</h5>
+                                                    </div>
+
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">Total Tax Amount </h5>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">Total Discount Amount </h5>
+                                                    </div>
+
+                                                    @*<div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">
+                                                            Crates Sold
+                                                            <span>
+                                                                @Model.SelectMany(i => i.SaleInvoiceDetail).Sum(detail => Convert.ToInt32(detail.Quantity))
+
+                                                            </span>
+                                                        </h5>
+                                                    </div>*@
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- end col -->
+                        </div> <!-- end row -->
+
+                    </div>
+
+
+
+                    <!-- end tab pane -->
+                </div>
+                <!-- end tab content -->
+            </div>
+
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+    <!-- end row -->
+    <!-- end row -->
+
+</div> <!-- container-fluid -->
+<!-- End Page-content -->
+<!-- JAVASCRIPT -->

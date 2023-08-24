@@ -1,0 +1,100 @@
+﻿
+@{
+    ViewData["Title"] = "StockReturn";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@section Scripts {
+    <!-- Include view-specific JavaScript files -->
+    <script src="~/js/Custom/Stock.js"></script>
+}
+<h1>Stock Return</h1>
+
+<div class="main-content">
+    @*<div class="page-content">*@
+    <div class="container-fluid">
+        <!-- start page title -->
+        <!-- end page title -->
+        <!-- <div class="col-xl-12"> -->
+        <div class="card">
+            <div class="card-header align-items-center d-flex">
+                <h4 class="card-title mb-0 flex-grow-1">Stock Return</h4>
+                <div class="flex-shrink-0">
+
+                </div>
+            </div><!-- end card header -->
+            <div class="card-body">
+                <div class="tab-content">
+                    <div class="tab-pane active" id="" role="tabpanel">
+                        <form id="Loadform">
+
+                            <div class="row">
+
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="example-text-input" class="form-label">Select WareHouse</label>
+                                        <select id="Stock_Return_dropdown" class="form-control chosen"></select>
+                                    </div>
+                                </div>
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="product">Select Product:</label>
+                                        <select id="Stock_Return_Product_dropdown" class="form-control chosen"></select>
+                                    </div>
+
+                                </div>
+
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="example-text-input" class="form-label">Quantity:</label>
+                                        <input class="form-control" type="number" value="1" id="Quantity" name="Quantity">
+                                    </div>
+                                </div>
+
+
+
+
+
+                                <div class="col-lg-4 col-md-6">
+                                    <div class="mb-3">
+                                        <label for="example-text-input" class="form-label">Load Invoice No:</label>
+                                        <input class="form-control" type="number" value="1" id="LoadInvoiceNo" name="LoadInvoiceNo">
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+                </div>
+            </div>
+
+
+
+            <div class="col-lg-4 col-md-6">
+                <div class="mb-3">
+                    <button class="btn btn-success w-md" type="button" onclick="$Stock.SaveStockReturn();"> Save Stock Return </button>
+                </div>
+            </div>
+
+            <!-- end tab pane -->
+          
+
+
+            <!-- end row -->
+            <!-- end row -->
+            <!-- end row -->
+
+        </div> <!-- container-fluid -->
+
+
+
+    </div>
+    @*</div>*@
+</div>
+

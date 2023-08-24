@@ -14,10 +14,13 @@
         <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
         <meta content="Themesbrand" name="author" />
         <!-- App favicon -->
+        <link rel="stylesheet" href="~/css/site.css" />
         <link rel="shortcut icon" href="~/images/favicon.ico">
+        <link href="~/css/jquery.dataTables.min.css" rel="stylesheet" />
+
         <link href="~/lib/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css" />
         <link href="~/lib/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" type="text/css" />
-        <!-- choices css -->
+        <link href="~/lib/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" />
         <link href="~/lib/choices.js/public/~/styles/choices.min.css" rel="stylesheet" type="text/css" />
         <!-- color picker css -->
         <link rel="stylesheet" href="~/lib/%40simonwep/pickr/themes/classic.min.css" /> <!-- 'classic' theme -->
@@ -28,13 +31,16 @@
         <!-- preloader css -->
         <link rel="stylesheet" href="~/css/preloader.min.css" type="text/css" />
         <!-- Bootstrap Css -->
-        <link href="~/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />
+        @*<link href="~/css/bootstrap.min.css" id="bootstrap-style" rel="stylesheet" type="text/css" />*@
         <!-- Icons Css -->
+        <link href="~/css/bootstrap.min.css" rel="stylesheet" />
         <link href="~/css/icons.min.css" rel="stylesheet" type="text/css" />
         <!-- App Css-->
         <link href="~/css/app.min.css" id="app-style" rel="stylesheet" type="text/css" />
         <link href="~/lib/toastr/css/toastr.css" rel="stylesheet" />
         <link href="~/css/chosen.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css">
+
         <style>
 
             button.btn.btn-success.w-md {
@@ -42,14 +48,8 @@
             }
         </style>
     </environment>
-    @*<environment exclude="Development">
-            <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
-                  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
-                  asp-fallback-test-class="sr-only" asp-fallback-test-property="position" asp-fallback-test-value="absolute"
-                  crossorigin="anonymous"
-                  integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"/>
-        </environment>*@
-    <link rel="stylesheet" href="~/css/site.css" />
+
+   
 </head>
 <body>
     @*<header>
@@ -135,7 +135,7 @@
                                 data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <img class="rounded-circle header-profile-user" src="~/images/users/avatar-1.jpg"
                                  alt="Header Avatar">
-                            <span class="d-none d-xl-inline-block ms-1 fw-medium">Hasan</span>
+                            <span class="d-none d-xl-inline-block ms-1 fw-medium">User</span>
                             <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
@@ -155,11 +155,18 @@
                 <div id="sidebar-menu">
                     <!-- Left Menu Start -->
                     <ul class="metismenu list-unstyled" id="side-menu">
-                        <li><a href="/Product/Details">Products</a></li>
-                        <li><a href="/Stock/Stock">Stocks</a></li>
-                        <li><a href="/Customer/Customer">Customers</a></li>
-                        <li><a href="/Sales/Index">Sales</a></li>
-                        <li><a href="/Sales/GetSales">Daily Report</a></li>
+                        <li><a href="/Purchase/Purchase">Purchase</a></li>
+                        <li><a href="/Load/Load">Load</a></li>
+                        <li><a href="/Stock/Stocks">WareHouse</a></li>
+                        <li><a href="/Stock/StockIn">Stock-In Report</a></li>
+                        <li><a href="/Stock/StockOut">Stock-Out Report</a></li>
+                        <li><a href="/Load/LoadDetails">Load Report</a></li>
+                        <li><a href="/Stock/StockReturn">Stock Return</a></li>
+                        <li><a href="/Stock/StockQuantity">Stock Quantity</a></li>
+                        <li><a href="/Product/Product">Product</a></li>
+                        <li><a href="/Tax/Tax">Tax</a></li>
+                        <li><a href="/Discount/Discount">Discount</a></li>
+
 
                     </ul>
 
@@ -189,66 +196,81 @@
             </footer>*@
     </div>
 
+
     <environment include="Development">
         <script src="~/lib/jquery/jquery.min.js"></script>
         <script src="~/js/pages/chosen.jquery.min.js"></script>
 
-
+        <!-- Bootstrap -->
         <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
         <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
         <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+        <!-- MetisMenu -->
         <script src="~/lib/metismenu/metisMenu.min.js"></script>
+
+        <!-- Simplebar -->
         <script src="~/lib/simplebar/simplebar.min.js"></script>
+
+        <!-- Waves -->
         <script src="~/lib/node-waves/waves.min.js"></script>
+
+        <!-- Feather Icons -->
         <script src="~/lib/feather-icons/feather.min.js"></script>
-        <!-- pace js -->
+
+        <!-- Pace JS -->
         <script src="~/lib/pace-js/pace.min.js"></script>
-        <!-- Required datatable js -->
+
+        <!-- DataTables -->
         <script src="~/lib/datatables.net/js/jquery.dataTables.min.js"></script>
         <script src="~/lib/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
         <script src="~/lib/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
         <script src="~/lib/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
-        <!-- choices js -->
-        <script src="~/lib/choices.js/public/~/scripts/choices.min.js"></script>
-        <!-- color picker js -->
-        <script src="~/lib/%40simonwep/pickr/pickr.min.js"></script>
-        <script src="~/lib/%40simonwep/pickr/pickr.es5.min.js"></script>
-        <!-- datepicker js -->
-        <script src="~/lib/flatpickr/flatpickr.min.js"></script>
-        <!-- init js -->
-        <script src="~/js/pages/form-advanced.init.js"></script>
-        <!-- Responsive examples -->
         <script src="~/lib/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
         <script src="~/lib/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
-        <!-- Datatable init js -->
-        <script src="~/js/pages/datatables.init.js"></script>
+        <script src="~/lib/jszip/jszip.min.js"></script>
+        <script src="~/lib/pdfmake/build/pdfmake.min.js"></script>
+        <script src="~/lib/pdfmake/build/vfs_fonts.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="~/lib/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js"></script>
 
+        <!-- Choices.js -->
+        @*<script src="~/lib/choices.js/public/~/scripts/choices.min.js"></script>*@
 
-        <script src="~/js/app.js"></script>
-        <script src="~/js/Custom/Purchase.js"></script>
+        <!-- Pickr -->
+        <script src="~/lib/%40simonwep/pickr/pickr.min.js"></script>
+        <script src="~/lib/%40simonwep/pickr/pickr.es5.min.js"></script>
+
+        <!-- Flatpickr -->
+        <script src="~/lib/flatpickr/flatpickr.min.js"></script>
+
+        <!-- jQuery Validate -->
+        <script src="~/js/pages/jquery.validate.min.js"></script>
+
+        <!-- Toastr -->
+        <script src="~/lib/toastr/js/toastr.min.js"></script>
+
+        <!-- Custom Scripts -->
+        <script src="~/js/Custom/Extention.js"></script>
+        @*<script src="~/js/Custom/Load.js"></script>*@
+        @*<script src="~/js/Custom/Purchase.js"></script>
         <script src="~/js/Custom/Customer.js"></script>
         <script src="~/js/Custom/Product.js"></script>
-        <script src="~/js/Custom/Stock.js"></script>
-        <script src="~/js/Custom/Extention.js"></script>
+        <script src="~/js/Custom/Stock.js"></script>*@
         <script src="~/js/Custom/Objects.js"></script>
-        <script src="~/js/pages/jquery.validate.min.js"></script>
-        <script src="~/lib/toastr/js/toastr.min.js"></script>
+
+        <!-- Page-specific Scripts -->
+        <script src="~/js/pages/form-advanced.init.js"></script>
+        <script src="~/js/pages/datatables.init.js"></script>
+
+        <!-- Main Application Script -->
+        <script src="~/js/app.js"></script>
+
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
     </environment>
-    @*<environment exclude="Development">
-            <script src="https://cdnjs.cloudflare.com/ajax/lib/jquery/3.3.1/jquery.min.js"
-                    asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
-                    asp-fallback-test="window.jQuery"
-                    crossorigin="anonymous"
-                    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=">
-            </script>
-            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
-                    asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"
-                    asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
-                    crossorigin="anonymous"
-                    integrity="sha384-xrRywqdh3PHs8keKZN+8zzc5TX0GRTLCcmivcbNJWm2rs5C8PRhcEn3czEjhAO9o">
-            </script>
-        </environment>*@
-    <script src="~/js/site.js" asp-append-version="true"></script>
+
 
     @RenderSection("Scripts", required: false)
 

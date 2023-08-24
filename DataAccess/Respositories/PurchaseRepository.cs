@@ -49,12 +49,24 @@ namespace DataAccess.Respositories
             {
                 using (var context = new FalconTraderContext())
                 {
-                    _Purchase.Date = DateTime.Now;
+
+                    var ExistCokeInvoice = await context.PurchaseInvoice.FirstOrDefaultAsync(sp => sp.CokeInvoice == _Purchase.CokeInvoice);
+                    if (ExistCokeInvoice!=null)
+                    {
+
+                        return new Result() { Status = ResultStatus.Error, Message = "Coke Invoice Already Exist!" };
+
+
+                    }
+
+                    DateTime currentDate = DateTime.Now;
+                    _Purchase.Date = currentDate;
                     _Purchase.Status = 0;
                     foreach (var detail in _Purchase.PurchaseInvoiceDetail)
                     {
-                        detail.Time = DateTime.Now;
-                        
+                        detail.Time = currentDate;
+
+
                     }
                     context.PurchaseInvoice.Add(_Purchase);
                     context.Entry(_Purchase).State = EntityState.Added;
@@ -70,26 +82,46 @@ namespace DataAccess.Respositories
                             var itemId = invoiceDetail.Itemid;
                             var quantity = invoiceDetail.Quantity;
                             var StockId = invoiceDetail.FkStockId;
-                            var stockProduct = await context.StockProducts.FirstOrDefaultAsync(sp => sp.FkItemId == itemId);
+                            var stockProduct = await context.StockProducts.FirstOrDefaultAsync(sp => sp.FkItemId == itemId && sp.FkStockId==StockId);
                             if (stockProduct != null)
                             {
                                 stockProduct.Quantity += quantity;
+                                stockProduct.DiscountAmount += invoiceDetail.DiscountAmount;
+                                stockProduct.TaxAmount += invoiceDetail.TaxAmount;
+                                stockProduct.GrossAmount += (invoiceDetail.Unitcost * invoiceDetail.Quantity);
+                                stockProduct.NetAmount += invoiceDetail.Total;
                                 await context.SaveChangesAsync();
                             }
                             else
                             {
                                 var stock_Product = new StockProducts
                                 {
-                                    FkStockId = StockId, // Set the appropriate stock ID here
+                                    FkStockId = StockId,
                                     FkItemId = itemId,
                                     Quantity = quantity,
-                                    Status = 1 // Set the appropriate status based on your logic
+                                    TaxAmount = invoiceDetail.TaxAmount,
+                                    DiscountAmount = invoiceDetail.DiscountAmount,
+                                    GrossAmount= (invoiceDetail.Unitcost * invoiceDetail.Quantity),
+                                    NetAmount=invoiceDetail.Total,
+                                    Status = 1 
                                 };
 
                                 context.StockProducts.Add(stock_Product);
-                               await context.SaveChangesAsync();
                             }
+
+                            var stockInEntry = new StockIn
+                            {
+                                FkStockId = StockId,
+                                ItemId = itemId,
+                                Quantity = quantity,
+                                StockInDate = currentDate,
+                                FkPuchaseInvoiceId=_Purchase.Purchaseinvoiceid
+                            };
+
+                            context.StockIn.Add(stockInEntry);
+
                         }
+                           await context.SaveChangesAsync();
 
                         return new Result() { Status = ResultStatus.Success, Message = "Success", Data = generatedId };
 
@@ -154,6 +186,65 @@ namespace DataAccess.Respositories
 
             }
         }
+
+
+        public async Task<Result> DeletePurchaseInvoice(int purchaseInvoiceId)
+        {
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
+                    var purchaseInvoice = await context.PurchaseInvoice
+                        .Include(pi => pi.PurchaseInvoiceDetail)
+                        .FirstOrDefaultAsync(pi => pi.Purchaseinvoiceid == purchaseInvoiceId);
+
+                    if (purchaseInvoice == null)
+                    {
+                        return new Result() { Status = ResultStatus.Error, Message = "Purchase Invoice not found." };
+                    }
+                    else
+                    {
+                        purchaseInvoice.Status = 1;
+                    }
+
+                    //context.PurchaseInvoiceDetail.RemoveRange(purchaseInvoice.PurchaseInvoiceDetail);
+                    context.PurchaseInvoice.Update(purchaseInvoice);
+
+                    // Update Stock
+                    foreach (var invoiceDetail in purchaseInvoice.PurchaseInvoiceDetail)
+                    {
+                        var itemId = invoiceDetail.Itemid;
+                        var quantity = invoiceDetail.Quantity;
+                        var stockId = invoiceDetail.FkStockId;
+                        var stockProduct = await context.StockProducts.FirstOrDefaultAsync(sp => sp.FkItemId == itemId && sp.FkStockId == stockId);
+
+                        if (stockProduct != null)
+                        {
+                            stockProduct.Quantity -= quantity;
+                        }
+
+                        
+                    }
+
+                    int result = await context.SaveChangesAsync();
+
+                    if (result > 0)
+                    {
+                        return new Result() { Status = ResultStatus.Success, Message = "Purchase Invoice deleted successfully." };
+                    }
+                    else
+                    {
+                        return new Result() { Status = ResultStatus.Error, Message = "Error deleting Purchase Invoice." };
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Result() { Status = ResultStatus.Error, Message = ex.Message };
+            }
+        }
+
+       
 
     }
 }

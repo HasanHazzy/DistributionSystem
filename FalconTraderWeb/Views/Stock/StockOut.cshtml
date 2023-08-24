@@ -1,0 +1,205 @@
+﻿
+@{
+    ViewData["Title"] = "StockOut";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>StockOut</h1>
+
+
+@using DataAccess.Models
+@model List<StockOutModel>
+
+@section Scripts {
+    <!-- Include view-specific JavaScript files -->
+    <script src="~/js/Custom/Stock.js"></script>
+}
+<h1>Daily Report</h1>
+
+<!-- ============================================================== -->
+<div class="main-content">
+    <div>
+        <div class="container-fluid">
+            <!-- start page title -->
+            <!-- end page title -->
+            <!-- <div class="col-xl-12"> -->
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Daily Report</h4>
+
+                    <div class="flex-shrink-0">
+                        <ul class="nav nav-tabs-custom card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#DailyReport" role="tab">StockOut-Report</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#AllSales" role="tab">All Sales</a>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="StockInReport" role="tabpanel">
+
+                            <form asp-controller="Stock" asp-action="StockOut" method="post">
+
+
+                                <div>
+                                    <div class="row">
+
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="form-group mb-3">
+                                                <div>
+                                                    <label class="form-label">Select From Date Range</label>
+                                                    @*<input type="text" class="form-control" name="datepicker" id="datepicker">*@
+                                                    <input type="date" name="startdate" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="form-group mb-3">
+                                                <div>
+                                                    <label class="form-label">Select To Date Range</label>
+                                                    @*<input type="text" class="form-control" name="datepicker" id="datepicker">*@
+                                                    <input type="date" name="enddate" class="form-control" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="text-center">
+                                                <button type="submit" class="btn btn-success w-md">Search</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </form>
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Report</h4>
+                                            @*<input type="hidden" value="@ViewBag.StockIn" id="allsalestab" />*@
+                                        </div>
+                                        <div class="card-body">
+
+                                            <table id="stocktable" class="table table-hover table-striped table-bordered table-condensed dataTable-excel datatable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Load Invoice No</th>
+                                                        <th>Stock Name</th>
+                                                        <th>Product Name</th>
+                                                        <th>Quantity</th>
+                                                        <th>Return</th>
+                                                        <th>Discount Regular</th>
+                                                        <td>Discount FOC</td>
+                                                        <td>Discount HTH</td>
+                                                        <th>Tax Amount</th>
+                                                        <th>Total</th>
+                                                        <th>Margin</th>
+                                                        <th>StockOut Date</th>
+                                                    </tr>
+                                                </thead>
+
+                                                @if (Model != null)
+                                                {
+                                                    <tbody>
+
+                                                        @foreach (var stock in Model)
+                                                        {
+                                                        <tr id="row">
+                                                            <td>@stock.LoadInvoiceNo</td>
+                                                            <td>@stock.StockName</td>
+                                                            <td>@stock.ProductName</td>
+                                                            <td>@stock.Quantity</td>
+                                                            <td>@stock.Return</td>
+                                                            <td>@stock.DiscountRegular</td>
+                                                            <td>@stock.DiscountFOCAmount</td>
+                                                            <td>@stock.DiscountHTHAmount</td>
+                                                            <td>@stock.TaxAmount</td>
+                                                            <td>@stock.LoadInvoiceDetailTotal</td>
+                                                            <td>@stock.Margin</td>
+                                                            <td>@stock.StockOut_Date.Value.ToShortDateString()</td>
+
+
+                                                        </tr>
+                                                        }
+
+                                                    </tbody>
+
+                                                    <tfoot>
+                                                        <tr>
+                                                            <th colspan="5"></th>
+                                                            <th>Total Discount Regular:<span>@Model.Sum(i => i.DiscountRegular)</span> </th>
+                                                            <th>Total Discount FOC:<span>@Model.Sum(i => i.DiscountFOCAmount)</span> </th>
+                                                            <th>Total HTH Discount:<span>@Model.Sum(i => i.DiscountHTHAmount)</span> </th>
+
+                                                            <th>Total Tax:<span>@Model.Sum(i => i.TaxAmount)</span> </th>
+
+                                                            <th>Total:<span> @Model.Sum(i => i.LoadInvoiceDetailTotal) </span></th>
+
+                                                            <th>Margin Total:<span> @Model.Sum(i => i.Margin) </span></th>
+
+
+                                                            <th>OverAll Total:<span> @Model.Sum(i => i.LoadInvoiceTotal) </span></th>
+
+                                                        </tr>
+                                                    </tfoot>
+                                                }
+                                            </table>
+                                            @*<div class="row" style="margin-top:40px">
+                                                @if (Model != null)
+                                                {
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">Total</h5>
+                                                    </div>
+
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">Total Tax Amount </h5>
+                                                    </div>
+                                                    <div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">Total Discount Amount </h5>
+                                                    </div>
+
+                                                    @*<div class="col-lg-4 col-md-6">
+                                                        <h5 class="font-size-14 mb-4">
+                                                            Crates Sold
+                                                            <span>
+                                                                @Model.SelectMany(i => i.SaleInvoiceDetail).Sum(detail => Convert.ToInt32(detail.Quantity))
+
+                                                            </span>
+                                                        </h5>
+                                                    </div>*@
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- end col -->
+                        </div> <!-- end row -->
+
+                    </div>
+
+
+
+                    <!-- end tab pane -->
+                </div>
+                <!-- end tab content -->
+            </div>
+
+            <!-- end card body -->
+        </div>
+        <!-- end card -->
+        <!-- end col -->
+    </div>
+    <!-- end row -->
+    <!-- end row -->
+    <!-- end row -->
+
+</div> <!-- container-fluid -->
+<!-- End Page-content -->
+<!-- JAVASCRIPT -->

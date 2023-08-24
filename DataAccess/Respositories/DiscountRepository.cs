@@ -14,33 +14,84 @@ namespace DataAccess.Respositories
     {
         public async Task<Result> GetDiscount()
         {
-                try
+            try
+            {
+                using (var context = new FalconTraderContext())
                 {
-                    using (var context = new FalconTraderContext())
-                    {
-                        var Result = await (from Discount in context.TblDiscount
+                    var Result = await (from Discount in context.TblDiscount
 
-                                            select new TblDiscount
-                                            {
-                                                Id = Discount.Id,
-                                                Descp=Discount.Descp,
-                                                Percentage = Discount.Percentage,
-                                               
-                                            }).ToListAsync();
+                                        select new TblDiscount
+                                        {
+                                            Id = Discount.Id,
+                                            Descp = Discount.Descp,
+                                            Percentage = Discount.Percentage,
 
-                        return new Result() { Status = ResultStatus.Success, Message = "Success", Data = Result };
-                    }
+                                        }).ToListAsync();
+
+                    return new Result() { Status = ResultStatus.Success, Message = "Success", Data = Result };
                 }
-                catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                return new Result()
                 {
-                    return new Result()
-                    {
-                        Data = "Error",
-                        Message = ex.Message,
-                        Status = ResultStatus.Error
-                    };
+                    Data = "Error",
+                    Message = ex.Message,
+                    Status = ResultStatus.Error
+                };
+            }
+
+        }
+
+        public async Task<Result> SaveDiscount(TblDiscount _Discount)
+        {
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
+                    _Discount.Status = 0;
+                    context.TblDiscount.Add(_Discount);
+                    int result = await context.SaveChangesAsync();
+
+                    if (result > 0)
+                        return new Result() { Status = ResultStatus.Success, Message = "Success", Data = "" };
+                    else
+                        return new Result() { Status = ResultStatus.Error, Message = "Error" };
                 }
-            
+            }
+
+            catch (Exception ex)
+            {
+                return new Result() { Status = ResultStatus.Error, Message = ex.Message, Data = "" };
+            }
+        }
+
+
+        public async Task<Result> UpdateDiscount(TblDiscount _Discount)
+        {
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
+                    _Discount.Status = 0;
+                    context.TblDiscount.Update(_Discount);
+                    int result = await context.SaveChangesAsync();
+
+                    if (result > 0)
+                        return new Result() { Status = ResultStatus.Success, Message = "Success", Data = "" };
+                    else
+                        return new Result() { Status = ResultStatus.Error, Message = "Error" };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new Result() { Status = ResultStatus.Error, Message = ex.Message, Data = "" };
+
+            }
         }
     }
 }
+
+    
+

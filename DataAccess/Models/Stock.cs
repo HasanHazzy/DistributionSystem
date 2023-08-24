@@ -7,6 +7,7 @@ namespace DataAccess.Models
     {
         public Stock()
         {
+            LoadInvoiceDetail = new HashSet<LoadInvoiceDetail>();
             PurchaseInvoiceDetail = new HashSet<PurchaseInvoiceDetail>();
             StockIn = new HashSet<StockIn>();
             StockOut = new HashSet<StockOut>();
@@ -17,7 +18,9 @@ namespace DataAccess.Models
         public int Id { get; set; }
         public string Descp { get; set; }
         public string Symbol { get; set; }
+        public int? Status { get; set; }
 
+        public virtual ICollection<LoadInvoiceDetail> LoadInvoiceDetail { get; set; }
         public virtual ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetail { get; set; }
         public virtual ICollection<StockIn> StockIn { get; set; }
         public virtual ICollection<StockOut> StockOut { get; set; }

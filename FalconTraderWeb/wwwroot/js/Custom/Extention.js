@@ -41,6 +41,8 @@
     }
 
     _$.Post = function (_url, _data, _onsuccess) {
+        console.log(_data);
+        debugger;
         $.ajax({
             url: _url,
             type: "POST",
@@ -334,7 +336,7 @@
     }
 
     _$.DataTable = function (Selector, groupcolumn, colspan) {
-        
+        debugger;
         var flag = false;
         var rows = [];
         if ($(Selector).length > 0) {
@@ -358,6 +360,8 @@
                             "info": "Showing <span>_START_</span> to <span>_END_</span> of <span>_TOTAL_</span> entries",
                             "lengthMenu": "_MENU_ <span>entries per page</span>"
                         },
+
+                        
                         "autoWidth": false,
                         'dom': "lfrtip",
                         "drawCallback": function (settings) {
@@ -443,10 +447,15 @@
                     }
                     if ($(this).hasClass("dataTable-excel")) {
                         opt.dom = 'Bfrtip',
-                        opt.buttons = [{
-                            extend: "excel",
-                            className: "btn-sm"
-                        }]
+                            opt.buttons = [
+                                { extend: 'pdfHtml5', footer: true }
+                            ],
+                        opt.lengthMenu = [[50], [50, "All"]];
+
+                            
+
+                           
+                       
                     }
                     if ($(this).hasClass('dataTable-tools')) {
                         //opt.sDom = "T" + opt.sDom;
@@ -907,6 +916,7 @@
                                 _$.HideLoader();
                                 $(div).hide();
                                 return [];
+
                             }
                         }
 

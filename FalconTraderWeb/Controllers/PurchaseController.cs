@@ -48,8 +48,16 @@ namespace FalconTraderWeb.Controllers
         [HttpPost]
         public async Task<Result> SavePurchaseInvoice([FromBody] PurchaseInvoice _Purchase)
         {
-            var DropDownData = await Repo.SavePurchaseInvoice(_Purchase);
-            return DropDownData;
+            var Result = await Repo.SavePurchaseInvoice(_Purchase);
+            return Result;
+
+        }
+
+        [HttpPost]
+        public async Task<Result> DeletePurchaseInvoice([FromBody] PurchaseInvoice _Purchase)
+        {
+            var Result = await Repo.DeletePurchaseInvoice(_Purchase.Purchaseinvoiceid);
+            return Result;
 
         }
     }

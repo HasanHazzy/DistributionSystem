@@ -23,11 +23,12 @@ namespace FalconTrader_Api.Controllers
 
         }
 
-        [Route("SavePurchaseInvoice")]
+        [Route("SaveLoadInvoice")]
         [HttpPost]
-        public async Task<Result> SaveSalesInvoice([FromBody] PurchaseInvoice _Purchase)
+        public async Task<Result> SaveSalesInvoice([FromBody] LoadInvoice _LoadInvoice)
         {
-            var Result = await Repo.SavePurchaseInvoice(_Purchase);
+            var Result = new Result();
+           // var Result = await Repo.SavePurchaseInvoice(_Purchase);
             return Result;
         }
 

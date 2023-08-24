@@ -10,7 +10,7 @@ using DataAccess.Models;
 
 namespace DataAccess.Respositories
 {
-    class TaxRepository : ITax
+   public class TaxRepository : ITax
     {
         public async Task<Result> GetTax()
         {
@@ -38,6 +38,52 @@ namespace DataAccess.Respositories
                     Message = ex.Message,
                     Status = ResultStatus.Error
                 };
+            }
+        }
+
+        public async Task<Result> SaveTax(Tax _Tax)
+        {
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
+                    context.Tax.Add(_Tax);
+                    int result = await context.SaveChangesAsync();
+
+                    if (result > 0)
+                        return new Result() { Status = ResultStatus.Success, Message = "Success", Data = "" };
+                    else
+                        return new Result() { Status = ResultStatus.Error, Message = "Error" };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new Result() { Status = ResultStatus.Error, Message = ex.Message, Data = "" };
+
+            }
+        }
+
+        public async Task<Result> UpdateTax(Tax _Tax)
+        {
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
+                    context.Tax.Update(_Tax);
+                    int result = await context.SaveChangesAsync();
+
+                    if (result > 0)
+                        return new Result() { Status = ResultStatus.Success, Message = "Success", Data = "" };
+                    else
+                        return new Result() { Status = ResultStatus.Error, Message = "Error" };
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new Result() { Status = ResultStatus.Error, Message = ex.Message, Data = "" };
+
             }
         }
     }

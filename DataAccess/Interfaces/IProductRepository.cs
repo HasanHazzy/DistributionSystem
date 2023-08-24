@@ -10,10 +10,12 @@ namespace DataAccess.Interfaces
     public interface IProductRepository
     {
         Task<Result> GetProducts();
+        Task<Result> GetStockProducts();
         Task<Result> GetProductById(string ProductId);
         Task<Result> InsertProduct(Products product_);
         Task<Result> UpdateProduct(Products product_);
-        Task<Result> DeleteProduct(string ProductId);
+        Task<Result> DeleteProduct(int ItemId);
+
 
     }
 }

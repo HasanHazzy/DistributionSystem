@@ -8,7 +8,7 @@ namespace DataAccess.Models
         public PurchaseInvoice()
         {
             PurchaseInvoiceDetail = new HashSet<PurchaseInvoiceDetail>();
-            StockReturn = new HashSet<StockReturn>();
+            StockIn = new HashSet<StockIn>();
         }
 
         public int Purchaseinvoiceid { get; set; }
@@ -18,8 +18,10 @@ namespace DataAccess.Models
         public double? TotalDiscount { get; set; }
         public double? TotalTax { get; set; }
         public int? Status { get; set; }
+        public string CokeInvoice { get; set; }
+        public DateTime? DeliveryDate { get; set; }
 
         public virtual ICollection<PurchaseInvoiceDetail> PurchaseInvoiceDetail { get; set; }
-        public virtual ICollection<StockReturn> StockReturn { get; set; }
+        public virtual ICollection<StockIn> StockIn { get; set; }
     }
 }

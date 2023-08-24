@@ -12,8 +12,8 @@ namespace DataAccess.Models
         public double? Unitcost { get; set; }
         public double? Total { get; set; }
         public DateTime? Time { get; set; }
-        public int? DiscountPercentage { get; set; }
-        public decimal? TaxPercentage { get; set; }
+        public double? DiscountAmount { get; set; }
+        public double? TaxAmount { get; set; }
         public int? FkStockId { get; set; }
 
         public virtual PurchaseInvoice FkPurchaseInvoice { get; set; }

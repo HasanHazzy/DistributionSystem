@@ -1,0 +1,359 @@
+﻿
+@{
+    ViewData["Title"] = "Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Scripts {
+    <!-- Include view-specific JavaScript files -->
+    <script src="~/js/Custom/Product.js"></script>
+}
+
+<h1>Product</h1>
+
+<!-- <body data-layout="horizontal"> -->
+<!-- Begin page -->
+<!-- ========== Left Sidebar Start ========== -->
+<!-- Left Sidebar End -->
+<!-- ============================================================== -->
+<!-- Start right Content here -->
+<!-- ============================================================== -->
+<div class="main-content">
+        <div class="container-fluid">
+            <!-- start page title -->
+            <!-- end page title -->
+            <!-- <div class="col-xl-12"> -->
+            <div class="card">
+                <div class="card-header align-items-center d-flex">
+                    <h4 class="card-title mb-0 flex-grow-1">Products</h4>
+                    <div class="flex-shrink-0">
+                        <ul class="nav nav-tabs-custom card-header-tabs" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#buy-tab" role="tab">Product Entry</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#sell-tab" role="tab">Update Product</a>
+                            </li>
+                           
+                        </ul>
+                    </div>
+                </div><!-- end card header -->
+                <div class="card-body">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="buy-tab" role="tabpanel">
+                            <form id="Products">
+                                <div>
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="mb-3">
+                                                <label for="example-text-input" class="form-label">Product Code</label>
+                                                <input class="form-control" type="text" placeholder="Enter Product Code" value="" id="ProductCode" name="ProductCode">
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="mb-3">
+                                                <label for="example-text-input" class="form-label">Product Name</label>
+                                                <input class="form-control" type="text" value="" placeholder="Enter Product Name" id="Itemdescp" name="Itemdescp">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="mb-3">
+                                                <label for="example-text-input" class="form-label">Product Price</label>
+                                                <input class="form-control" type="number" value="" placeholder="Enter Price" id="UnitPrice" name="UnitPrice">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="mb-3">
+                                                <label for="example-text-input" class="form-label">Margin</label>
+                                                <input class="form-control" type="number" value="" placeholder="Enter Price" id="Margin" name="Margin">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="row">
+                                       
+                                        <div class="col-lg-4 col-md-6">
+                                            <div class="text-right">
+                                                <button type="button" class="btn btn-success w-md" onclick="$Product.SaveProduct();">Save Product Info</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+                        </div>
+
+                        <!-- end tab pane -->
+                        <div class="tab-pane" id="sell-tab" role="tabpanel">
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <div class="card-header">
+                                            <h4 class="card-title">Products</h4>
+
+                                        </div>
+                                        <div class="card-body">
+
+                                            <table id="Producttbl" class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Product Id</th>
+                                                        <th>Product Code</th>
+                                                        <th>Product Descp</th>
+                                                        <th>Unit Price</th>
+                                                        <th>Margin %</th>
+                                                        <th>Model</th>
+                                                    </tr>
+                                                </thead>
+
+
+                                                <tbody>
+                                                    @*@foreach (var product in ViewBag.Products)
+                                                    {
+                                                        <tr id="row" @product.Itemid>
+                                                            <td>@product.Itemid</td>
+                                                            <td>@product.ProductCode</td>
+                                                            <td>@product.Itemdescp</td>
+                                                            <td>@product.UnitPrice</td>
+                                                            <td>
+                                                                <div>
+                                                                    <a href="#" class="vwEdit" onclick="$Product.ShowModal(this);" data-id="@product.Itemid">
+                                                                        <span data-feather="edit"></span>
+                                                                    </a>
+                                                                    <a href="#" class="delbtn" data-id="@product.Itemid">
+                                                                       
+                                                                        <span data-feather="trash-2"></span>
+                                                                    </a>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    }*@
+
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                    </div>
+                                </div> <!-- end col -->
+                            </div> <!-- end row -->
+
+                        </div>
+
+                        <div class="modal" id="ProductModal" tabindex="-1" role="dialog" aria-hidden="true">
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content modal-bg-white">
+                                    <form id="ProductmdlForm">
+                                        <div class="modal-header">
+                                            <div class="modal-title">
+                                                <h3>Update Product</h3>
+                                            </div>
+                                            <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                                                <span data-feather="x"></span>
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="row">
+                                                <div class="col-lg-12">
+                                                    <div class="mds row mb-4">
+
+                                                        <div class="col-xs-12 col-lg-8">
+                                                            <input type="hidden" ID="Itemid" name="Itemid" class="form-control">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mds row mb-4">
+                                                        <div class="col-xs-12 col-lg-4">
+                                                            <div class="md-label">Product Code</div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-lg-8">
+                                                            <input type="text" ID="ProductCode" name="ProductCode" class="form-control " min="1" value="1">
+                                                        </div>
+                                                    </div>
+                                                    <div class="mds row mb-4">
+                                                        <div class="col-xs-12 col-lg-4">
+                                                            <div class="md-label">Product Descp:</div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-lg-8">
+
+                                                            <input type="text" id="Itemdescp" name="Itemdescp" class="form-control" />
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mds row mb-4">
+                                                        <div class="col-xs-12 col-lg-4">
+                                                            <div class="md-label">UnitPrice</div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-lg-8">
+
+                                                            <input type="number" id="UnitPrice" name="UnitPrice" class="form-control" />
+
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="mds row mb-4">
+                                                        <div class="col-xs-12 col-lg-4">
+                                                            <div class="md-label">Margin</div>
+                                                        </div>
+                                                        <div class="col-xs-12 col-lg-8">
+
+                                                            <input type="number" id="Margin" name="Margin" class="form-control" />
+
+                                                        </div>
+                                                    </div>
+                                                    
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+
+                                            <button type="button" class="btn btn-primary btn-sm btn" onclick="$Product.UpdateProduct()">Update Product</button>
+                                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end card -->
+                        <!-- end col -->
+                    </div>
+
+
+                    <!-- end row -->
+                    <!-- end row -->
+                    <!-- end row -->
+
+                </div> <!-- container-fluid -->
+
+
+
+            </div>
+
+
+            <!-- End Page-content -->
+            <!-- END layout-wrapper -->
+            <!-- Right Sidebar -->
+            <div class="right-bar">
+                <div data-simplebar class="h-100">
+                    <div class="rightbar-title d-flex align-items-center bg-dark p-3">
+                        <h5 class="m-0 me-2 text-white">Theme Customizer</h5>
+                        <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
+                            <i class="mdi mdi-close noti-icon"></i>
+                        </a>
+                    </div>
+                    <!-- Settings -->
+                    <hr class="m-0" />
+                    <div class="p-4">
+                        <h6 class="mb-3">Layout</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout"
+                                   id="layout-vertical" value="vertical">
+                            <label class="form-check-label" for="layout-vertical">Vertical</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout"
+                                   id="layout-horizontal" value="horizontal">
+                            <label class="form-check-label" for="layout-horizontal">Horizontal</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2">Layout Mode</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-mode"
+                                   id="layout-mode-light" value="light">
+                            <label class="form-check-label" for="layout-mode-light">Light</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-mode"
+                                   id="layout-mode-dark" value="dark">
+                            <label class="form-check-label" for="layout-mode-dark">Dark</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2">Layout Width</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-width"
+                                   id="layout-width-fuild" value="fuild" onchange="document.body.setAttribute('data-layout-size', 'fluid')">
+                            <label class="form-check-label" for="layout-width-fuild">Fluid</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-width"
+                                   id="layout-width-boxed" value="boxed" onchange="document.body.setAttribute('data-layout-size', 'boxed')">
+                            <label class="form-check-label" for="layout-width-boxed">Boxed</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2">Layout Position</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-position"
+                                   id="layout-position-fixed" value="fixed" onchange="document.body.setAttribute('data-layout-scrollable', 'false')">
+                            <label class="form-check-label" for="layout-position-fixed">Fixed</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-position"
+                                   id="layout-position-scrollable" value="scrollable" onchange="document.body.setAttribute('data-layout-scrollable', 'true')">
+                            <label class="form-check-label" for="layout-position-scrollable">Scrollable</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2">Topbar Color</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="topbar-color"
+                                   id="topbar-color-light" value="light" onchange="document.body.setAttribute('data-topbar', 'light')">
+                            <label class="form-check-label" for="topbar-color-light">Light</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="topbar-color"
+                                   id="topbar-color-dark" value="dark" onchange="document.body.setAttribute('data-topbar', 'dark')">
+                            <label class="form-check-label" for="topbar-color-dark">Dark</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Size</h6>
+                        <div class="form-check sidebar-setting">
+                            <input class="form-check-input" type="radio" name="sidebar-size"
+                                   id="sidebar-size-default" value="default" onchange="document.body.setAttribute('data-sidebar-size', 'lg')">
+                            <label class="form-check-label" for="sidebar-size-default">Default</label>
+                        </div>
+                        <div class="form-check sidebar-setting">
+                            <input class="form-check-input" type="radio" name="sidebar-size"
+                                   id="sidebar-size-compact" value="compact" onchange="document.body.setAttribute('data-sidebar-size', 'md')">
+                            <label class="form-check-label" for="sidebar-size-compact">Compact</label>
+                        </div>
+                        <div class="form-check sidebar-setting">
+                            <input class="form-check-input" type="radio" name="sidebar-size"
+                                   id="sidebar-size-small" value="small" onchange="document.body.setAttribute('data-sidebar-size', 'sm')">
+                            <label class="form-check-label" for="sidebar-size-small">Small (Icon View)</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2 sidebar-setting">Sidebar Color</h6>
+                        <div class="form-check sidebar-setting">
+                            <input class="form-check-input" type="radio" name="sidebar-color"
+                                   id="sidebar-color-light" value="light" onchange="document.body.setAttribute('data-sidebar', 'light')">
+                            <label class="form-check-label" for="sidebar-color-light">Light</label>
+                        </div>
+                        <div class="form-check sidebar-setting">
+                            <input class="form-check-input" type="radio" name="sidebar-color"
+                                   id="sidebar-color-dark" value="dark" onchange="document.body.setAttribute('data-sidebar', 'dark')">
+                            <label class="form-check-label" for="sidebar-color-dark">Dark</label>
+                        </div>
+                        <div class="form-check sidebar-setting">
+                            <input class="form-check-input" type="radio" name="sidebar-color"
+                                   id="sidebar-color-brand" value="brand" onchange="document.body.setAttribute('data-sidebar', 'brand')">
+                            <label class="form-check-label" for="sidebar-color-brand">Brand</label>
+                        </div>
+                        <h6 class="mt-4 mb-3 pt-2">Direction</h6>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-direction"
+                                   id="layout-direction-ltr" value="ltr">
+                            <label class="form-check-label" for="layout-direction-ltr">LTR</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="layout-direction"
+                                   id="layout-direction-rtl" value="rtl">
+                            <label class="form-check-label" for="layout-direction-rtl">RTL</label>
+                        </div>
+                    </div>
+                </div> <!-- end slimscroll-menu-->
+            </div>
+        </div>
+        </div>
+        <!-- /Right-bar -->
+        <!-- Right bar overlay-->
+        <div class="rightbar-overlay"></div>
+        <!-- JAVASCRIPT -->
+

@@ -15,6 +15,8 @@ namespace DataAccess.Interfaces
         Task<Result> SavePurchaseInvoice(PurchaseInvoice _Purchase);
         Task<Result> GetBill(int InvoiceNo);
         Task<Result> GetDropDownData();
+        Task<Result> DeletePurchaseInvoice(int purchaseInvoiceId);
+
 
     }
 

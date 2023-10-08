@@ -7,12 +7,13 @@ using DataAccess.Models;
 using DataAccess.Respositories;
 using DataAccess.Interfaces;
 using DataAccess.Generic;
+using Newtonsoft.Json;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace FalconTraderWeb.Controllers
 {
-   
+
 
     public class PurchaseController : Controller
     {
@@ -42,7 +43,7 @@ namespace FalconTraderWeb.Controllers
         {
             var DropDownData = await Repo.GetDropDownData();
             return DropDownData;
-            
+
         }
 
         [HttpPost]
@@ -59,6 +60,21 @@ namespace FalconTraderWeb.Controllers
             var Result = await Repo.DeletePurchaseInvoice(_Purchase.Purchaseinvoiceid);
             return Result;
 
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetPurchaseByInvoiceNo([FromBody] PurchaseInvoice _Purchase)
+        {
+            var Result = await Repo.GetPurchaseByInvoiceNo(_Purchase.CokeInvoice);
+            string json = JsonConvert.SerializeObject(Result);
+            return Json(json);
+        }
+
+        [HttpPost]
+        public async Task<Result> UpdatePurchaseInvoice([FromBody] PurchaseInvoice _Purchase)
+        {
+            var Result = await Repo.UpdatePurchaseInvoice(_Purchase);
+            return Result;
         }
     }
 }

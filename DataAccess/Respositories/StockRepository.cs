@@ -49,90 +49,111 @@ namespace DataAccess.Respositories
             }
         }
 
-        public async Task<Result> SaveStockReturn(StockReturn Stock_Return)
+        public async Task<Result> SaveStockReturn(List<StockReturn> StockReturn)
         {
             try
             {
-
-                using (var _dbContext = new FalconTraderContext())
+                foreach (var Stock_Return in StockReturn)
                 {
-                    var stock =  _dbContext.Stock.FirstOrDefault(s => s.Id == Stock_Return.FkStockId);
-                    var LoadInvoice = _dbContext.LoadInvoice
-                        .Include(li => li.LoadInvoiceDetail)
-                        .FirstOrDefault(pi => pi.Id == Stock_Return.FkLoadInvoiceId);
-                    var item =  _dbContext.Products.FirstOrDefault(p => p.Itemid == Stock_Return.FkItemId);
-
-                    var StockProducts = _dbContext.StockProducts.FirstOrDefault(p => p.FkItemId == Stock_Return.FkItemId);
-
-
-                    if (stock ==null || LoadInvoice ==null || StockProducts == null)
+                    using (var _dbContext = new FalconTraderContext())
                     {
-                        return new Result() { Status = ResultStatus.Error, Message = "Invalid stock, purchase invoice, or item.", Data = "" };
+                        var StockReturnItemId = Stock_Return.FkItemId;
+                        var stock = _dbContext.Stock.FirstOrDefault(s => s.Id == Stock_Return.FkStockId);
+                        var LoadInvoice = _dbContext.LoadInvoice
+                            .Include(li => li.LoadInvoiceDetail)
+                            .FirstOrDefault(pi => pi.LoadInvoiceNo == Stock_Return.FkLoadInvoiceId);
+
+                        var StockProducts = _dbContext.StockProducts.FirstOrDefault(p => p.FkItemId == StockReturnItemId && p.FkStockId==Stock_Return.FkStockId);
+
+
+                        if (stock == null || LoadInvoice == null || StockProducts == null)
+                        {
+                            return new Result() { Status = ResultStatus.Error, Message = "Invalid stock, purchase invoice, or item.", Data = "" };
+
+                        }
+
+                        var Product = await _dbContext.Products.FirstOrDefaultAsync(p => p.Itemid == StockReturnItemId);
+                        if (StockProducts != null)
+                        {
+                            double? grossAmount = (Product.UnitPrice * Stock_Return.Quantity);
+                            double? tax = calculateTax(0.10, grossAmount);
+                            double? DiscountPercentage = CalculateDiscountPercentage(StockProducts.GrossAmount, StockProducts.DiscountAmount);
+                            double? discountamount = 0;
+                            if (DiscountPercentage==0 || DiscountPercentage <0 || double.IsNaN(Convert.ToDouble(DiscountPercentage)))
+                            {
+                                discountamount = CalculateDiscount(StockProducts.DiscountPercentage, grossAmount);
+                                discountamount = Math.Round(Convert.ToDouble(discountamount),2);
+                            }
+                            else
+                            {
+                                discountamount = CalculateDiscount(DiscountPercentage, grossAmount);
+
+                            }
+
+                            StockProducts.GrossAmount += grossAmount;
+                            StockProducts.Quantity += Stock_Return.Quantity;
+                            StockProducts.TaxAmount += tax;
+                            StockProducts.DiscountAmount += discountamount;
+                            StockProducts.NetAmount += (grossAmount + tax) - discountamount;
+
+                        }
+                        // Update PurchaseInvoice details (if necessary
+                        var invoiceDetail = LoadInvoice.LoadInvoiceDetail.FirstOrDefault(d => d.FkItemId == Stock_Return.FkItemId);
+                        if (invoiceDetail != null)
+                        {
+                            invoiceDetail.Quantity -= Stock_Return.Quantity;
+                            invoiceDetail.Total = (Product.UnitPrice) * (invoiceDetail.Quantity);
+
+                            //  _dbContext.SaveChanges();
+
+
+
+                        }
+                        else
+                        {
+                            return new Result() { Status = ResultStatus.Error, Message = "Incorrect Item Id", Data = "" };
+
+                        }
+
+
+                        // Create a new StockReturn entity
+                        var stockReturn = new StockReturn
+                        {
+                            FkStockId = Stock_Return.FkStockId,
+                            FkLoadInvoiceId = invoiceDetail.FkLoadInvoiceId,
+                            FkItemId = Stock_Return.FkItemId,
+                            Quantity = Stock_Return.Quantity,
+                            Note=Stock_Return.Note,
+                            ReturnDate=DateTime.Now,
+                            Status = 0
+                        };
+
+                        var InvoiceTotal = LoadInvoice.LoadInvoiceDetail.Sum(x => x.Total);
+                       
+                        if (InvoiceTotal > 0)
+                        {
+                            LoadInvoice.InvoiceTotal = InvoiceTotal;
+
+                        }
+                        else
+                        {
+                            LoadInvoice.Tax = 0;
+                            LoadInvoice.InvoiceTotal = 0;
+                            LoadInvoice.DiscountHth = 0;
+                            LoadInvoice.DiscountFoc = 0;
+                            LoadInvoice.DiscountRegular = 0;
+                        }
+
+                        _dbContext.StockReturn.Add(stockReturn);
+                        _dbContext.LoadInvoice.Update(LoadInvoice);
+                        _dbContext.StockProducts.Update(StockProducts);
+                        _dbContext.SaveChanges();
 
                     }
-
-
-                    // Update PurchaseInvoice details (if necessary
-                    var invoiceDetail = LoadInvoice.LoadInvoiceDetail.FirstOrDefault(d => d.FkItemId == Stock_Return.FkItemId);
-                    if (invoiceDetail != null)
-                    {
-                        invoiceDetail.Quantity -= Stock_Return.Quantity;
-                        StockProducts.Quantity += Stock_Return.Quantity;
-                        invoiceDetail.Total = (item.UnitPrice) * (invoiceDetail.Quantity);
-                      //  _dbContext.SaveChanges();
-
-
-                        
-                    }
-                    else
-                    {
-                        return new Result() { Status = ResultStatus.Error, Message = "Incorrect Item Id", Data = "" };
-
-                    }
-
-
-                    // Create a new StockReturn entity
-                    var stockReturn = new StockReturn
-                    {
-                        FkStockId = Stock_Return.FkStockId,
-                        FkLoadInvoiceId = Stock_Return.FkLoadInvoiceId,
-                        FkItemId = Stock_Return.FkItemId,
-                        Quantity = Stock_Return.Quantity,
-                        Status = 0
-                    };
-
-                    var InvoiceTotal = LoadInvoice.LoadInvoiceDetail.Sum(x => x.Total);
-                    var TaxPercentage = _dbContext.Tax.Where(x => x.Id == LoadInvoice.FkTaxId).Select(x => x.Percentage).FirstOrDefault();
-                    var TaxAmount = CalculateTax(InvoiceTotal, Convert.ToDouble(TaxPercentage));
-
-                    if (InvoiceTotal>0)
-                    {
-                        InvoiceTotal -= TaxAmount;
-                        InvoiceTotal -= LoadInvoice.DiscountHth;
-                        InvoiceTotal -= LoadInvoice.DiscountFoc;
-                        InvoiceTotal -= LoadInvoice.DiscountRegular;
-                        LoadInvoice.Tax = TaxAmount;
-                        LoadInvoice.InvoiceTotal = InvoiceTotal;
-
-                    }
-                    else
-                    {
-                        LoadInvoice.Tax = 0;
-                        LoadInvoice.InvoiceTotal = 0;
-                        LoadInvoice.DiscountHth = 0;
-                        LoadInvoice.DiscountFoc = 0;
-                        LoadInvoice.DiscountRegular = 0;
-                    }
-              
-                    _dbContext.StockReturn.Add(stockReturn);
-                    _dbContext.LoadInvoice.Update(LoadInvoice);
-                    _dbContext.StockProducts.Update(StockProducts);
-                    _dbContext.SaveChanges();
-
-                    return new Result() { Status = ResultStatus.Success, Message = "Success", Data = "" };
-
 
                 }
+                return new Result() { Status = ResultStatus.Success, Message = "Success", Data = "" };
+
             }
             catch (Exception ex)
             {
@@ -146,17 +167,6 @@ namespace DataAccess.Respositories
         
         }
 
-        public double? CalculateTax(double? total, double? TaxPercentage)
-        {
-            var TaxAmount = total * (TaxPercentage / 100);
-            return TaxAmount;
-        }
-
-        public double? CalculateDiscount(double? total, double? DiscountPercentage)
-        {
-            var DiscountAmount = total * (DiscountPercentage / 100);
-            return DiscountAmount;
-        }
 
         public async Task<Result> GetDropDownData()
         {
@@ -198,8 +208,7 @@ namespace DataAccess.Respositories
                                         join PurchaseInvoiceDetail in context.PurchaseInvoiceDetail on PurchaseInvoice.Purchaseinvoiceid equals PurchaseInvoiceDetail.FkPurchaseInvoiceId
                                         join product in context.Products on PurchaseInvoiceDetail.Itemid equals product.Itemid
                                         join Stocks in context.Stock on PurchaseInvoiceDetail.FkStockId equals Stocks.Id
-         
-                                        where PurchaseInvoice.Date>=startdate && PurchaseInvoice.Date<=enddate && product.Status==0 && PurchaseInvoice.Status==0
+                                         where PurchaseInvoice.Date>=startdate && PurchaseInvoice.Date<=enddate && product.Status==0 && PurchaseInvoice.Status==0 && PurchaseInvoiceDetail.Status==0
                                         select new StockInModel
                                         {
                                             CokeInvoice=PurchaseInvoice.CokeInvoice,
@@ -299,6 +308,7 @@ namespace DataAccess.Respositories
                                             Quantity = sp.Quantity,
                                             GrossAmount = sp.GrossAmount,
                                             TotalTax = sp.TaxAmount,
+                                            TotalDiscount=sp.DiscountAmount,
                                             NetAmount = sp.NetAmount
                                         }).ToListAsync();
 
@@ -396,7 +406,29 @@ namespace DataAccess.Respositories
                 return new Result() { Status = ResultStatus.Error, Message = ex.Message, Data = "" };
             }
         }
+
+        public double? calculateTax(double taxpercentage, double? total)
+        {
+            return total * (taxpercentage / 100);
+
+        }
+
+       
+
+        public double? CalculateDiscountPercentage(double? ProductTotal, double? DiscountAmount)
+        {
+            double? percentage = DiscountAmount * 100 / ProductTotal;
+            return Math.Round(Convert.ToDouble(percentage), 2);
+
+        }
+
+        public double? CalculateDiscount(double? total, double? DiscountPercentage)
+        {
+            var DiscountAmount = total * (DiscountPercentage / 100);
+            return DiscountAmount;
+        }
     }
 }
+
 
 

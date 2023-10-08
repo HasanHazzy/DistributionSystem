@@ -13,7 +13,7 @@ namespace DataAccess.Interfaces
 
         Task<Result> GetDropDownData();
 
-        Task<Result> SaveStockReturn(StockReturn Stock_Return);
+        Task<Result> SaveStockReturn(List<StockReturn> Stock_Return);
 
         Task<Result> GetStocks(DateTime? startdate,DateTime? enddate);
 

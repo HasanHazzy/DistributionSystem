@@ -41,8 +41,6 @@
     }
 
     _$.Post = function (_url, _data, _onsuccess) {
-        console.log(_data);
-        debugger;
         $.ajax({
             url: _url,
             type: "POST",
@@ -213,6 +211,10 @@
                 toastr.warning(_message, _title);
                 break;
             case 400:
+                _title = "NotFound"
+                toastr.warning(_message, _title);
+                break;
+            case 404:
                 _title = "NotFound"
                 toastr.warning(_message, _title);
                 break;
@@ -694,7 +696,16 @@
     }
 
     _$.ParseDateToString = function (DateObj) {
-        var datestring = DateObj.getDate() + "/" + (DateObj.getMonth() + 1) + "/" + DateObj.getFullYear()
+        var datestring = DateObj.getDate() + "/" + (DateObj.getMonth() + 1) + "/" + DateObj.getFullYear();
+        return datestring;
+    }
+
+    _$.formatDate=function(dateString) {
+        var dateObj = new Date(dateString);
+        var year = dateObj.getFullYear();
+        var month = ('0' + (dateObj.getMonth() + 1)).slice(-2);
+        var day = ('0' + dateObj.getDate()).slice(-2);
+        return year + '-' + month + '-' + day;
     }
 
     _$.DateDifference = function (StartDate, EndDate) {

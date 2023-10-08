@@ -7,6 +7,7 @@ using DataAccess.Models;
 using DataAccess.Respositories;
 using DataAccess.Interfaces;
 using DataAccess.Generic;
+using Newtonsoft.Json;
 
 namespace FalconTraderWeb.Controllers
 {
@@ -41,6 +42,13 @@ namespace FalconTraderWeb.Controllers
             return Result;
 
         }
+        [HttpPost]
+        public async Task<Result> UpdateLoadInvoice([FromBody]LoadInvoice LoadMaster)
+        {
+            var Result = await Repo.UpdateLoadInvoice(LoadMaster);
+            return Result;
+
+        }
 
         [HttpPost]
         public async Task<IActionResult> LoadDetails(DateTime startdate, DateTime enddate)
@@ -56,5 +64,17 @@ namespace FalconTraderWeb.Controllers
             }
 
         }
+
+        [HttpPost]
+        public async Task<JsonResult> LoadEditDetails([FromBody]LoadInvoice LoadInvoice)
+        {
+            var GetLoad = await Repo.GetLoadByNo(LoadInvoice.LoadInvoiceNo);
+
+            string json = JsonConvert.SerializeObject(GetLoad);
+            return Json(json);
+
+        }
+
+
     }
 }

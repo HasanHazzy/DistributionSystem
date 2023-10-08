@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DataAccess.Models
 {
@@ -15,6 +16,10 @@ namespace DataAccess.Models
         public double? DiscountAmount { get; set; }
         public double? TaxAmount { get; set; }
         public int? FkStockId { get; set; }
+        public int? Status { get; set; }
+
+        [NotMapped]
+        public double? DiscountPercentage { get; set; }
 
         public virtual PurchaseInvoice FkPurchaseInvoice { get; set; }
         public virtual Stock FkStock { get; set; }

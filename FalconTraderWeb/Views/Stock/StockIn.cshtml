@@ -125,7 +125,15 @@
                                                                 <td>@stock.DeliveryDate</td>
 
                                                             }
-                                                            <td>@stock.StockIn_Date.Value.ToShortDateString()</td>
+                                                            @if (stock.StockIn_Date.HasValue)
+                                                            {
+                                                                <td>@stock.StockIn_Date.Value.ToShortDateString()</td>
+
+                                                            }
+                                                            else
+                                                            {
+                                                                <td>-</td>
+                                                            }
 
 
                                                         </tr>

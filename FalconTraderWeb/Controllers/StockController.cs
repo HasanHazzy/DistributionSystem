@@ -103,7 +103,7 @@ namespace FalconTraderWeb.Controllers
         }
 
         [HttpPost]
-        public async Task<Result> SaveStockReturn([FromBody] StockReturn _StockReturn)
+        public async Task<Result> SaveStockReturn([FromBody] List<StockReturn> _StockReturn)
         {
             var Result = await Repo.SaveStockReturn(_StockReturn);
             return Result;

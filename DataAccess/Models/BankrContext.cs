@@ -47,6 +47,10 @@ namespace DataAccess.Models
             {
                 entity.Property(e => e.Id).HasColumnName("id");
 
+                entity.Property(e => e.BookerName)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.Date)
                     .HasColumnName("date")
                     .HasColumnType("datetime");
@@ -66,6 +70,8 @@ namespace DataAccess.Models
                 entity.Property(e => e.FkTaxId).HasColumnName("Fk_Tax_Id");
 
                 entity.Property(e => e.InvoiceTotal).HasColumnName("Invoice_Total");
+
+                entity.Property(e => e.LoadDate).HasColumnType("date");
 
                 entity.Property(e => e.Status).HasColumnName("status");
 
@@ -326,6 +332,14 @@ namespace DataAccess.Models
                 entity.Property(e => e.FkLoadInvoiceId).HasColumnName("Fk_Load_Invoice_Id");
 
                 entity.Property(e => e.FkStockId).HasColumnName("FK_Stock_Id");
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(200)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ReturnDate)
+                    .HasColumnName("Return_Date")
+                    .HasColumnType("date");
 
                 entity.HasOne(d => d.FkItem)
                     .WithMany(p => p.StockReturn)

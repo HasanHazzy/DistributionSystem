@@ -14,6 +14,7 @@ namespace DataAccess.Models
         public double? DiscountAmount { get; set; }
         public double? TaxAmount { get; set; }
         public double? NetAmount { get; set; }
+        public double? DiscountPercentage { get; set; }
 
         public virtual Products FkItem { get; set; }
         public virtual Stock FkStock { get; set; }

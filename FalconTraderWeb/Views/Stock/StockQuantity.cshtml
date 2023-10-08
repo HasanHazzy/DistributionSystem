@@ -61,6 +61,7 @@
                                                         <th>Unit Price</th>
                                                         <th>Quantity</th>
                                                         <th>Gross Amount</th>
+                                                        <th>Discount Amount</th>
                                                         <th>Total Tax</th>
                                                         <th>Net Amount</th>
                                                     </tr>
@@ -72,17 +73,18 @@
 
                                                         @foreach (var stock in Model)
                                                         {
-                                                            <tr id="row">
-                                                                <td>@stock.StockName</td>
-                                                                <td>@stock.ProductCode</td>
-                                                                <td>@stock.ProductName</td>
-                                                                <td>@stock.unitPrice</td>
-                                                                <td>@stock.Quantity</td>
-                                                                <td>@stock.GrossAmount</td>
-                                                                <td>@stock.TotalTax</td>
-                                                                <td>@stock.NetAmount</td>
+                                                        <tr id="row">
+                                                            <td>@stock.StockName</td>
+                                                            <td>@stock.ProductCode</td>
+                                                            <td>@stock.ProductName</td>
+                                                            <td>@stock.unitPrice</td>
+                                                            <td>@stock.Quantity</td>
+                                                            <td>@stock.GrossAmount</td>
+                                                            <td>@stock.TotalDiscount</td>
+                                                            <td>@stock.TotalTax</td>
+                                                            <td>@stock.NetAmount</td>
 
-                                                            </tr>
+                                                        </tr>
                                                         }
 
                                                     </tbody>
@@ -92,6 +94,7 @@
 
                                                             <th><span>@Model.Sum(i => i.Quantity).Value.ToString("N0")</span></th>
                                                             <th><span>@Model.Sum(i => i.GrossAmount).Value.ToString("N0")</span></th>
+                                                            <th><span>@Model.Sum(i => i.TotalDiscount).Value.ToString("N0")</span></th>
                                                             <th><span>@Model.Sum(i => i.TotalTax).Value.ToString("N0")</span></th>
                                                             <th><span>@Model.Sum(i => i.NetAmount).Value.ToString("N0")</span></th>
 

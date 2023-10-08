@@ -17,5 +17,6 @@ namespace DataAccess.Interfaces
         Task<Result> DeleteProduct(int ItemId);
 
 
+
     }
 }

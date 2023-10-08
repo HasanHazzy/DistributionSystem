@@ -17,6 +17,12 @@ namespace DataAccess.Interfaces
         Task<Result> GetDropDownData();
         Task<Result> DeletePurchaseInvoice(int purchaseInvoiceId);
 
+        Task<Result> GetPurchaseByInvoiceNo(string InvoiceNo);
+
+        Task<Result> UpdatePurchaseInvoice(PurchaseInvoice updatedPurchase);
+
+
+
 
     }
 

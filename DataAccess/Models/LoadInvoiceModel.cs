@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace DataAccess.Models
 {
-    public partial class LoadInvoice
+    public class LoadInvoiceModel
     {
-        public LoadInvoice()
-        {
-            LoadInvoiceDetail = new HashSet<LoadInvoiceDetail>();
-            StockOut = new HashSet<StockOut>();
-            StockReturn = new HashSet<StockReturn>();
-        }
-
         public int Id { get; set; }
         public int? FkRouteId { get; set; }
         public string VehicleName { get; set; }
@@ -23,16 +17,13 @@ namespace DataAccess.Models
         public double? DiscountRegular { get; set; }
         public double? Tax { get; set; }
         public DateTime? Date { get; set; }
+        public int? Status { get; set; }
         public int? FkTaxId { get; set; }
         public DateTime? LoadDate { get; set; }
         public int? LoadInvoiceNo { get; set; }
         public string BookerName { get; set; }
-        public int? Status { get; set; }
 
-        public virtual Route FkRoute { get; set; }
-        public virtual Tax FkTax { get; set; }
-        public virtual ICollection<LoadInvoiceDetail> LoadInvoiceDetail { get; set; }
-        public virtual ICollection<StockOut> StockOut { get; set; }
-        public virtual ICollection<StockReturn> StockReturn { get; set; }
+        public List<LoadInvoiceDetailModel> LoadInvoiceDetail { get; set; }
+
     }
 }

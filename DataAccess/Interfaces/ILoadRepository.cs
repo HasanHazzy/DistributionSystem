@@ -15,6 +15,10 @@ namespace DataAccess.Interfaces
         Task<Result> GetBill(int InvoiceNo);
         Task<Result> GetDropDownData();
         Task<Result> GetLoadDetails(DateTime? datefrom, DateTime? dateend);
+        Task<Result> GetLoadByNo(int? LoadNo);
+        Task<Result> UpdateLoadInvoice(LoadInvoice UpdatedLoadInvoice);
+
+
 
     }
 }

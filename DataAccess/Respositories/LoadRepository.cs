@@ -92,7 +92,7 @@ namespace DataAccess.Respositories
         public Task<Result> GetPurchases(DateTime filterdate)
         {
             throw new NotImplementedException();
-        } 
+        }
 
         public async Task<Result> SaveLoadInvoice(LoadInvoice _Load)
         {
@@ -125,14 +125,42 @@ namespace DataAccess.Respositories
                             var quantity = invoiceDetail.Quantity;
                             var StockId = invoiceDetail.FkStockId;
                             var stockProduct = await context.StockProducts.FirstOrDefaultAsync(sp => sp.FkItemId == itemId && sp.FkStockId == StockId);
+                            var Product = await context.Products.FirstOrDefaultAsync(p => p.Itemid == itemId);
                             if (stockProduct != null)
                             {
+                                
                                 double? grossAmount = (invoiceDetail.Unitcost * invoiceDetail.Quantity);
-                              
+                                double? tax = calculateTax(0.10, grossAmount);
+                                double? DiscountPercentage = CalculateDiscountPercentage(stockProduct.GrossAmount, stockProduct.DiscountAmount);
+                                double? discountamount = CalculateDiscount(DiscountPercentage, grossAmount);
                                 stockProduct.GrossAmount -= grossAmount;
-                                stockProduct.NetAmount -= invoiceDetail.Total;
                                 stockProduct.Quantity -= quantity;
                                 stockProduct.TaxAmount -= calculateTax(0.10, grossAmount);
+                                stockProduct.DiscountAmount -= discountamount;
+                                stockProduct.NetAmount -= (invoiceDetail.Total + tax) - discountamount;
+
+                                if (stockProduct.TaxAmount<0)
+                                {
+                                    stockProduct.TaxAmount = 0;
+
+                                }
+                                if (stockProduct.DiscountAmount<0)
+                                {
+                                    stockProduct.DiscountAmount = 0;
+
+                                }
+
+                                if (stockProduct.NetAmount<0)
+                                {
+                                    stockProduct.NetAmount = 0;
+
+                                }
+
+                                if (stockProduct.GrossAmount < 0)
+                                {
+                                    stockProduct.GrossAmount = 0;
+
+                                }
                                 await context.SaveChangesAsync();
                             }
                             invoiceDetail.Status = 0;
@@ -141,10 +169,10 @@ namespace DataAccess.Respositories
                             {
                                 FkStockId = StockId,
                                 ItemId = itemId,
-                                OutQuantity= quantity,
+                                OutQuantity = quantity,
                                 StockOutDate = currentDate,
-                                FkLoadInvoiceId=_Load.Id
-                                
+                                FkLoadInvoiceId = _Load.Id
+
                             };
 
                             context.StockOut.Add(stockOutEntry);
@@ -168,7 +196,119 @@ namespace DataAccess.Respositories
 
             }
         }
+        public async Task<Result> UpdateLoadInvoice(LoadInvoice UpdatedLoadInvoice)
+        {
+            int generatedId = 0;
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
 
+                    var ExistingLoadInvoice = await context.LoadInvoice
+                       .Include(pi => pi.LoadInvoiceDetail).Where(pid => pid.Status == 0)
+                       .FirstOrDefaultAsync(pi => pi.LoadInvoiceNo == UpdatedLoadInvoice.LoadInvoiceNo);
+
+
+                    if (ExistingLoadInvoice == null)
+                    {
+                        return new Result() { Status = ResultStatus.Error, Message = "Load Invoice not found." };
+                    }
+
+                    ExistingLoadInvoice.BookerName = UpdatedLoadInvoice.BookerName;
+                    ExistingLoadInvoice.DeliveryMan = UpdatedLoadInvoice.DeliveryMan;
+                    ExistingLoadInvoice.LoadDate = UpdatedLoadInvoice.LoadDate;
+                    ExistingLoadInvoice.InvoiceTotal = UpdatedLoadInvoice.InvoiceTotal;
+                    ExistingLoadInvoice.VehicleName = UpdatedLoadInvoice.VehicleName;
+
+
+                    //Update Stock
+                    foreach (var existingDetail in ExistingLoadInvoice.LoadInvoiceDetail)
+                    {
+                        var itemId = existingDetail.FkItemId;
+                        var quantity = existingDetail.Quantity;
+                        var StockId = existingDetail.FkStockId;
+                        existingDetail.Status = 1;
+                        var stockProduct = await context.StockProducts.FirstOrDefaultAsync(sp => sp.FkItemId == itemId && sp.FkStockId == StockId);
+                        var Product = await context.Products.FirstOrDefaultAsync(p => p.Itemid == itemId);
+                        if (stockProduct != null)
+                        {
+                            double? grossAmount = (existingDetail.Unitcost * existingDetail.Quantity);
+                            double? tax = calculateTax(0.10, grossAmount);
+                            double? DiscountPercentage = CalculateDiscountPercentage(stockProduct.GrossAmount, stockProduct.DiscountAmount);
+                            double? discountamount = CalculateDiscount(DiscountPercentage, grossAmount);
+                            stockProduct.GrossAmount += grossAmount;
+                            stockProduct.Quantity += quantity;
+                            stockProduct.TaxAmount += calculateTax(0.10, grossAmount);
+                            stockProduct.DiscountAmount += discountamount;
+                            stockProduct.NetAmount += (existingDetail.Total + tax) - discountamount;
+
+                        }
+
+                    }
+                    await context.SaveChangesAsync();
+
+
+                    foreach (var UpdateDetail in UpdatedLoadInvoice.LoadInvoiceDetail)
+                    {
+                        var itemId = UpdateDetail.FkItemId;
+                        var quantity = UpdateDetail.Quantity;
+                        var StockId = UpdateDetail.FkStockId;
+                        var stockProduct = await context.StockProducts.FirstOrDefaultAsync(sp => sp.FkItemId == itemId && sp.FkStockId == StockId);
+                        var Product = await context.Products.FirstOrDefaultAsync(p => p.Itemid == itemId);
+                        if (stockProduct != null)
+                        {
+                            double? grossAmount = (UpdateDetail.Unitcost * UpdateDetail.Quantity);
+                            double? DiscountPercentage = CalculateDiscountPercentage(stockProduct.GrossAmount, stockProduct.DiscountAmount);
+                            double? tax = calculateTax(0.10, grossAmount);
+                            double? discountamount = CalculateDiscount(DiscountPercentage, grossAmount);
+                            stockProduct.GrossAmount -= grossAmount;
+                            stockProduct.Quantity -= quantity;
+                            stockProduct.TaxAmount -= calculateTax(0.10, grossAmount);
+                            stockProduct.DiscountAmount -= discountamount;
+                            stockProduct.NetAmount -= (UpdateDetail.Total + tax) - discountamount;
+                        }
+                        UpdateDetail.Status = 0;
+                        UpdateDetail.Date = DateTime.Now;
+
+                        if (stockProduct.TaxAmount < 0)
+                        {
+                            stockProduct.TaxAmount = 0;
+
+                        }
+                        if (stockProduct.DiscountAmount < 0)
+                        {
+                            stockProduct.DiscountAmount = 0;
+
+                        }
+
+                        if (stockProduct.NetAmount < 0)
+                        {
+                            stockProduct.NetAmount = 0;
+
+                        }
+
+                        if (stockProduct.GrossAmount < 0)
+                        {
+                            stockProduct.GrossAmount = 0;
+
+                        }
+
+                    }
+                    ExistingLoadInvoice.LoadInvoiceDetail = UpdatedLoadInvoice.LoadInvoiceDetail;
+                    await context.SaveChangesAsync();
+
+                    return new Result() { Status = ResultStatus.Success, Message = "Success", Data = generatedId };
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return new Result() { Status = ResultStatus.Error, Message = ex.Message, Data = "" };
+
+            }
+        }
         public async Task<Result> GetLoadDetails(DateTime? datefrom, DateTime? dateend)
         {
             try
@@ -182,18 +322,18 @@ namespace DataAccess.Respositories
                                         join Route in context.Route on LoadInvoice.FkRouteId equals Route.RouteId
                                         join StockReturn in context.StockReturn on LoadInvoice.Id equals StockReturn.FkLoadInvoiceId into stockReturnGroup
                                         from stockReturn in stockReturnGroup.DefaultIfEmpty()
-                                        where LoadInvoice.Date >= datefrom && LoadInvoice.Date <= dateend
+                                        where LoadInvoice.LoadDate >= datefrom && LoadInvoice.LoadDate <= dateend
                                         select new LoadModel
                                         {
-                                            DeliveryMan=LoadInvoice.DeliveryMan,
-                                            RouteName=Route.RouteName,
-                                            LoadInvoiceNo = LoadInvoice.Id,
+                                            DeliveryMan = LoadInvoice.DeliveryMan,
+                                            RouteName = Route.RouteName,
+                                            LoadInvoiceNo = LoadInvoice.LoadInvoiceNo,
                                             ProductName = product.Itemdescp,
-                                            Quantity=LoadInvoiceDetail.Quantity,
-                                            Return=stockReturn.Quantity,
-                                            VehicleNo=LoadInvoice.VehicleName,
-                                            Date=LoadInvoice.Date
-
+                                            Quantity = LoadInvoiceDetail.Quantity,
+                                            Return = stockReturn.Quantity,
+                                            VehicleNo = LoadInvoice.VehicleName,
+                                            Date = LoadInvoice.Date,
+                                            LoadDate = LoadInvoice.LoadDate
 
                                         }).ToListAsync();
 
@@ -212,13 +352,83 @@ namespace DataAccess.Respositories
 
         }
 
+        public async Task<Result> GetLoadByNo(int? LoadNo)
+        {
+            try
+            {
+                using (var context = new FalconTraderContext())
+                {
+                    var LoadInvoice = await context.LoadInvoice
+                       .Include(pi => pi.LoadInvoiceDetail).Where(pid => pid.Status == 0)
+                       .FirstOrDefaultAsync(pi => pi.LoadInvoiceNo == LoadNo);
+                    if (LoadInvoice != null)
+                    {
+                        List<LoadInvoiceDetailModel> obj = new List<LoadInvoiceDetailModel>();
+                        LoadInvoiceModel Load_Model = new LoadInvoiceModel();
 
+                        Load_Model.LoadInvoiceNo = LoadInvoice.LoadInvoiceNo;
+                        Load_Model.BookerName = LoadInvoice.BookerName;
+                        Load_Model.DeliveryMan = LoadInvoice.DeliveryMan;
+                        Load_Model.InvoiceTotal = LoadInvoice.InvoiceTotal;
+                        Load_Model.VehicleName = LoadInvoice.VehicleName;
+                        Load_Model.FkRouteId = LoadInvoice.FkRouteId;
+                        Load_Model.FkTaxId = LoadInvoice.FkTaxId;
+                        Load_Model.LoadDate = LoadInvoice.LoadDate;
+                        LoadInvoiceDetailModel md = new LoadInvoiceDetailModel();
+                        foreach (var item in LoadInvoice.LoadInvoiceDetail)
+                        {
+                            LoadInvoiceDetailModel detailmd = new LoadInvoiceDetailModel();
+                            detailmd.FkStockId = item.FkStockId;
+                            detailmd.FkItemId = item.FkItemId;
+                            detailmd.Quantity = item.Quantity;
+                            detailmd.Unitcost = item.Unitcost;
+                            detailmd.FkLoadInvoiceId = item.FkLoadInvoiceId;
+                            detailmd.Total = item.Total;
+                            detailmd.Date = item.Date;
+                            obj.Add(detailmd);
+
+                        }
+                        Load_Model.LoadInvoiceDetail = obj;
+                        return new Result() { Status = ResultStatus.Success, Message = "", Data = Load_Model };
+
+                    }
+                    else
+                    {
+                        return new Result() { Status = ResultStatus.NotFound, Message = "Invoice Not Found", Data = "" };
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return new Result()
+                {
+                    Data = "Error",
+                    Message = ex.Message,
+                    Status = ResultStatus.Error
+                };
+            }
+
+        }
         public double? calculateTax(double taxpercentage, double? total)
         {
             return total * (taxpercentage / 100);
 
         }
 
+        public double? CalculateDiscount(double? DiscountPercentage, double? total)
+        {
+            double? t= total * (DiscountPercentage / 100);
+            return Math.Round(Convert.ToDouble(t), 2);
 
+        }
+
+        public double? CalculateDiscountPercentage(double? ProductTotal, double? DiscountAmount)
+        {
+            double? percentage = DiscountAmount * 100 / ProductTotal;
+            return Math.Round(Convert.ToDouble(percentage),2);
+
+        }
     }
 }

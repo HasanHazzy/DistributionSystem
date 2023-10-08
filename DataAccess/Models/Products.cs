@@ -23,6 +23,7 @@ namespace DataAccess.Models
         public double? Margin { get; set; }
         public int? Status { get; set; }
 
+
         [NotMapped]
         public int? CurrentStock { get; set; }
 

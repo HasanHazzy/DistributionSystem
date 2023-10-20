@@ -358,6 +358,7 @@ $Load.MakeLoadDetails = function (marginpercentage) {
 };
 
 $Load.MakeEditLoadDetails = function (marginpercentage) {
+    debugger;
     $('#EditLoadtbl').DataTable().clear().draw();
     var InvoiceTotal = 0;
     var SubTotal = 0;
@@ -367,7 +368,7 @@ $Load.MakeEditLoadDetails = function (marginpercentage) {
     //var TotalDiscount = RegularDiscount + HTHDiscount + FOCDiscount;
     //var taxAmount = 0;
     for (var i = 0; i < LoadEditMaster.LoadInvoiceDetail.length; i++) {
-        var product_obj = Products.filter(x => x.itemid === LoadEditMaster.LoadInvoiceDetail[i].FkItemId);
+        var product_obj = Products.filter(x => x.itemid === LoadEditMaster.LoadInvoiceDetail[i].FkItemId && x.fK_StockId === LoadEditMaster.LoadInvoiceDetail[i].FkStockId);
        
         LoadEditMaster.LoadInvoiceDetail[i].productCode = product_obj[0].productCode;
         LoadEditMaster.LoadInvoiceDetail[i].itemdescp = product_obj[0].itemdescp;
@@ -598,6 +599,7 @@ $Load.LoadDetails = function () {
                 break;
 
             case 200:
+                debugger;
                 LoadEditMaster = result.Data;
                 var LoadInvoiceNo = parseInt(LoadEditMaster.LoadInvoiceNo);
                 $("#EditDeliveryMan").val(LoadEditMaster.DeliveryMan);

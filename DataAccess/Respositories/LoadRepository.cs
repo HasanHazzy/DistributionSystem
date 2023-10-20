@@ -128,7 +128,7 @@ namespace DataAccess.Respositories
                             var Product = await context.Products.FirstOrDefaultAsync(p => p.Itemid == itemId);
                             if (stockProduct != null)
                             {
-                                
+
                                 double? grossAmount = (invoiceDetail.Unitcost * invoiceDetail.Quantity);
                                 double? tax = calculateTax(0.10, grossAmount);
                                 double? DiscountPercentage = CalculateDiscountPercentage(stockProduct.GrossAmount, stockProduct.DiscountAmount);
@@ -138,19 +138,19 @@ namespace DataAccess.Respositories
                                 stockProduct.TaxAmount -= calculateTax(0.10, grossAmount);
                                 stockProduct.DiscountAmount -= discountamount;
                                 stockProduct.NetAmount -= (invoiceDetail.Total + tax) - discountamount;
-
-                                if (stockProduct.TaxAmount<0)
+                                stockProduct.DiscountPercentage = DiscountPercentage;
+                                if (stockProduct.TaxAmount < 0)
                                 {
                                     stockProduct.TaxAmount = 0;
 
                                 }
-                                if (stockProduct.DiscountAmount<0)
+                                if (stockProduct.DiscountAmount < 0)
                                 {
                                     stockProduct.DiscountAmount = 0;
 
                                 }
 
-                                if (stockProduct.NetAmount<0)
+                                if (stockProduct.NetAmount < 0)
                                 {
                                     stockProduct.NetAmount = 0;
 
@@ -241,6 +241,7 @@ namespace DataAccess.Respositories
                             stockProduct.TaxAmount += calculateTax(0.10, grossAmount);
                             stockProduct.DiscountAmount += discountamount;
                             stockProduct.NetAmount += (existingDetail.Total + tax) - discountamount;
+                            stockProduct.DiscountPercentage = DiscountPercentage;
 
                         }
 
@@ -315,29 +316,38 @@ namespace DataAccess.Respositories
             {
                 using (var context = new FalconTraderContext())
                 {
-                    var Result = await (//from StockOut in context.StockOut
-                                        from LoadInvoice in context.LoadInvoice
-                                        join LoadInvoiceDetail in context.LoadInvoiceDetail on LoadInvoice.Id equals LoadInvoiceDetail.FkLoadInvoiceId
-                                        join product in context.Products on LoadInvoiceDetail.FkItemId equals product.Itemid
-                                        join Route in context.Route on LoadInvoice.FkRouteId equals Route.RouteId
-                                        join StockReturn in context.StockReturn on LoadInvoice.Id equals StockReturn.FkLoadInvoiceId into stockReturnGroup
-                                        from stockReturn in stockReturnGroup.DefaultIfEmpty()
-                                        where LoadInvoice.LoadDate >= datefrom && LoadInvoice.LoadDate <= dateend
-                                        select new LoadModel
-                                        {
-                                            DeliveryMan = LoadInvoice.DeliveryMan,
-                                            RouteName = Route.RouteName,
-                                            LoadInvoiceNo = LoadInvoice.LoadInvoiceNo,
-                                            ProductName = product.Itemdescp,
-                                            Quantity = LoadInvoiceDetail.Quantity,
-                                            Return = stockReturn.Quantity,
-                                            VehicleNo = LoadInvoice.VehicleName,
-                                            Date = LoadInvoice.Date,
-                                            LoadDate = LoadInvoice.LoadDate
+                                var Result = await (
+                    from LoadInvoice in context.LoadInvoice
+                    join LoadInvoiceDetail in context.LoadInvoiceDetail on LoadInvoice.Id equals LoadInvoiceDetail.FkLoadInvoiceId
+                    join product in context.Products on LoadInvoiceDetail.FkItemId equals product.Itemid
+                    join Route in context.Route on LoadInvoice.FkRouteId equals Route.RouteId
+                    join StockReturn in context.StockReturn on new
+                    {
+                        LoadInvoiceId = Convert.ToInt32(LoadInvoice.Id),
+                        ItemId = LoadInvoiceDetail.FkItemId,
+                        StockId = LoadInvoiceDetail.FkStockId
+                    } equals new
+                    {
+                        LoadInvoiceId = Convert.ToInt32(StockReturn.FkLoadInvoiceId),
+                        ItemId = StockReturn.FkItemId,
+                        StockId = StockReturn.FkStockId
+                    } into stockReturnGroup
+                    from stockReturn in stockReturnGroup.DefaultIfEmpty()
+                    where LoadInvoice.LoadDate >= datefrom && LoadInvoice.LoadDate <= dateend
+                    select new LoadModel
+                    {
+                        DeliveryMan = LoadInvoice.DeliveryMan,
+                        RouteName = Route.RouteName,
+                        LoadInvoiceNo = LoadInvoice.LoadInvoiceNo,
+                        ProductName = product.Itemdescp,
+                        Quantity = LoadInvoiceDetail.Quantity,
+                        Return = stockReturn != null ? stockReturn.Quantity : 0, // Handle null values
+                        VehicleNo = LoadInvoice.VehicleName,
+                        Date = LoadInvoice.Date,
+                        LoadDate = LoadInvoice.LoadDate
+                    }).ToListAsync();
 
-                                        }).ToListAsync();
-
-                    return new Result() { Status = ResultStatus.Success, Message = "Success", Data = Result };
+                                return new Result() { Status = ResultStatus.Success, Message = "Success", Data = Result };
                 }
             }
             catch (Exception ex)
@@ -419,7 +429,7 @@ namespace DataAccess.Respositories
 
         public double? CalculateDiscount(double? DiscountPercentage, double? total)
         {
-            double? t= total * (DiscountPercentage / 100);
+            double? t = total * (DiscountPercentage / 100);
             return Math.Round(Convert.ToDouble(t), 2);
 
         }
@@ -427,7 +437,7 @@ namespace DataAccess.Respositories
         public double? CalculateDiscountPercentage(double? ProductTotal, double? DiscountAmount)
         {
             double? percentage = DiscountAmount * 100 / ProductTotal;
-            return Math.Round(Convert.ToDouble(percentage),2);
+            return Math.Round(Convert.ToDouble(percentage), 2);
 
         }
     }

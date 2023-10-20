@@ -98,7 +98,7 @@ namespace DataAccess.Respositories
 
                         }
                         // Update PurchaseInvoice details (if necessary
-                        var invoiceDetail = LoadInvoice.LoadInvoiceDetail.FirstOrDefault(d => d.FkItemId == Stock_Return.FkItemId);
+                        var invoiceDetail = LoadInvoice.LoadInvoiceDetail.FirstOrDefault(d => d.FkItemId == Stock_Return.FkItemId && d.FkStockId==Stock_Return.FkStockId);
                         if (invoiceDetail != null)
                         {
                             invoiceDetail.Quantity -= Stock_Return.Quantity;
